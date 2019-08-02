@@ -14,43 +14,17 @@
 
 ## RDFoxTest: 测试RDFox的代码，使用datalog自定义规则推理;
 
-## FusekiTest：数据库连接（可以正常连接并进行数据库查询，但转换存在问题）
+## FusekiTest：数据库连接（可以正常连接并进行数据库查询，但转换存在问题），实现了container到service的推理
 
 # 代码存在问题
 
-目前代码都可以在正确环境下运行，存在的问题主要在与数据库连接一部分，我还没有找到解决下面问题的方法（这几天会继续找）：
+目前代码都可以在正确环境下运行，并且解决了以下问题：
 
-1. 合适的api
-	并没有找到合适的api直接读取三元组构造模型，拆分成s、p、o再重组的方式存在问题，即o存在两种，literal和resource，使用getResource或getLiteralImpl会报错（可能是我还没有彻底理解这两个函数以及构造的resource类）
-2. 本体模型构建
-	之前的demo都存在本体模型文件，即owl文件，内容如下：
-	
-	<?xml version="1.0" encoding="UTF-8"?>
-		<!DOCTYPE rdf:RDF [
-		<!ENTITY finance "http://www.example.org/kse/finance#">
-		<!ENTITY owl "http://www.w3.org/2002/07/owl#">
-		<!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-		<!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#">
-		<!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
-	]>
-	<rdf:RDF xml:base="&finance;"
-         xmlns:owl="&owl;"
-         xmlns:rdf="&rdf;"
-         xmlns:rdfs="&rdfs;">
+1. 连接fuseki并读取三元组
+2. 提取信息并进行推理
+3. 将数据写入fuseki数据库（目前写在本地数据库中）
 
-	<!-- Ontology Information -->
-	<owl:Ontology rdf:about=""/>
+本体文件：
+根据查找的资料及官方示例理解，如果想要根据rdfs、owl内置规则进行推理（subclass、type等规则），需要构建本体文件；
+如果采取自定义规则推理机，不需要此文件。
 
-	<owl:Class rdf:ID="PublicCompany">
-		<rdfs:subClassOf rdf:resource="Company"/>
-	</owl:Class>
-
-
-	<owl:ObjectProperty rdf:ID="control">
-		<rdfs:domain rdf:resource="Person"/>
-		<rdfs:range rdf:resource="Company"/>
-	</owl:ObjectProperty>
-
-	</rdf:RDF>
-	
-	在数据库中尚未确定其位置（还是说不需要这个文件，直接按照三元组中的信息来操作？）
