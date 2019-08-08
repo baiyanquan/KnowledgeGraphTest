@@ -84,26 +84,17 @@ public class NodeQuery {
         reasoner.setDerivationLogging(true);
         InfModel inf = ModelFactory.createInfModel(reasoner, model);
 
+        Query finalQuery = QueryFactory.create("SELECT DISTINCT ?o { "+ serviceName + " ?p ?o }");
+
+        QueryExecution qExec = QueryExecutionFactory.create(finalQuery, inf);
+
+        ResultSet rs = qExec.execSelect();
+
         System.out.println("推理结果：");
-        findTriple(inf.getDeductionsModel(), serviceName);
-        //updateTriplesInFuseki(inf.getDeductionsModel());
-    }
-
-    private static void outputAllTriples(Model model) {
-        StmtIterator itr = model.listStatements();
-        while (itr.hasNext()) {
-            System.out.println(itr.nextStatement());
-        }
-    }
-
-    private static void findTriple(Model model, String uri) {
-        StmtIterator itr = model.listStatements();
-        while (itr.hasNext()) {
-            Statement statement = itr.nextStatement();
-            String subjectString = "<" + statement.getSubject().toString() + ">";
-            if(subjectString.equals(uri)) {
-                System.out.println(statement);
-            }
+        while (rs.hasNext()) {
+            QuerySolution qs = rs.next() ;
+            String object = qs.get("o").toString();
+            System.out.println(object);
         }
     }
 }
