@@ -11,6 +11,7 @@ import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+//此代码为之前示例demo，不需考虑
 public class JenaTest {
 
     public static void output(Model model) {

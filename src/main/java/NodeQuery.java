@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+//此代码为sparql表达式demo，不需考虑
 public class NodeQuery {
     public static void main(String[] args) throws FileNotFoundException {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination("http://10.60.38.173:3030//DevKGData/query");

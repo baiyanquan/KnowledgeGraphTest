@@ -14,7 +14,7 @@
 
 ## RDFoxTest: 测试RDFox的代码，使用datalog自定义规则推理;
 
-## FusekiTest：数据库连接（可以正常连接并进行数据库查询，但转换存在问题），实现了container到service的推理
+## resource.EntityExtraction：数据库连接（可以正常连接并进行数据库查询，但转换存在问题），实现了container到service的推理
 
 ## NodeQuery：实现从service到节点的查询（包括了直接使用sparql查询和先推理再使用sparql查询）
 
