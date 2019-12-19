@@ -6,6 +6,8 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
 import predicate.PredicateExtraction;
 import resource.EntityExtraction;
 import util.FusekiDao;
@@ -180,7 +182,7 @@ public class Application {
         fusionModel.add(model);
         Reasoner reasoner = ReasonerRegistry.getRDFSReasoner();
         InfModel infModel = ModelFactory.createInfModel(reasoner, fusionModel);
-        Operations.outputAllTriples(infModel);
+        //Operations.outputAllTriples(infModel);
 
         System.out.println("\n");
         //属性路径查询表达式
@@ -198,12 +200,37 @@ public class Application {
             System.out.println(object);
         }
 
-        //写入文件
-        try {
-            FileWriter fwriter = new FileWriter("C:/Users/Administrator/Desktop/newOntology.ttl");     //没有文件会自动创建
-            ontModel.write(fwriter,"TURTLE");
-        } catch (IOException e) {
-            e.printStackTrace();
+        System.out.println("\n");
+        String rules =
+                "[rule1: (?X <http://pods/10.60.38.181/provides> ?Y) -> (?X <http://10.60.38.181/KGns/relates> ?Y)]\n" +
+                "[rule2: (?X <http://10.60.38.181/KGns/relates> ?Y) (?X <http://pods/10.60.38.181/deployed_in> ?Z) -> (?Z <http://10.60.38.181/KGns/relates> ?Y)]\n" +
+                "[rule3: (?X <http://10.60.38.181/KGns/relates> ?Y) (?X <http://pods/10.60.38.181/contains> ?Z) -> (?Z <http://10.60.38.181/KGns/relates> ?Y)]\n";
+
+        Reasoner ruleReasoner = new GenericRuleReasoner(Rule.parseRules(rules));
+        ruleReasoner.setDerivationLogging(true);
+        InfModel inf = ModelFactory.createInfModel(ruleReasoner, infModel);
+        //Operations.outputAllTriples(inf.getDeductionsModel());
+
+        Query query = QueryFactory.create(
+                "PREFIX pods_rel: " + "<http://pods/10.60.38.181/> \n" +
+                        "SELECT * " +
+                        "{" +
+                        "?s ?p <http://services/10.60.38.181/sock-shop/orders> ." +
+                        "}");
+        QueryExecution qe1 = QueryExecutionFactory.create(query, inf.getDeductionsModel());
+        ResultSet rs2 = qe1.execSelect();
+        while (rs2.hasNext()) {
+            QuerySolution qs = rs2.next();
+            String object = qs.get("s").toString();
+            System.out.println(object);
         }
+
+        //写入文件
+//        try {
+//            FileWriter fwriter = new FileWriter("C:/Users/Administrator/Desktop/newOntology.ttl");     //没有文件会自动创建
+//            ontModel.write(fwriter,"TURTLE");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

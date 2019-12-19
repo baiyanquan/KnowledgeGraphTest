@@ -11,9 +11,9 @@ public class Operations {
         StmtIterator itr = model.listStatements();
         while (itr.hasNext()) {
             Statement a = itr.nextStatement();
-            if(a.getPredicate().toString().contains("provides")) {
+            //if(a.getPredicate().toString().contains("provides")) {
                 System.out.println(a);
-            }
+            //}
         }
     }
 
